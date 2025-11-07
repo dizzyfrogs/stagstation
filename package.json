@@ -1,0 +1,27 @@
+{
+  "name": "stagstation",
+  "version": "1.0.0",
+  "description": "Save file converter for Hollow Knight and Silksong between PC and Switch",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "keywords": [
+    "hollow-knight",
+    "silksong",
+    "save-converter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "lucide": "^0.552.0"
+  }
+}
+
+
+
+

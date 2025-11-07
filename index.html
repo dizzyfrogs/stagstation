@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stagstation - Save Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Dust particle canvas -->
+    <canvas id="dust-canvas"></canvas>
+    
+    <!-- Window Controls -->
+    <div class="title-bar">
+        <div class="title-bar-drag-region"></div>
+        <div class="title-bar-controls">
+            <button class="title-bar-button" id="minimize-btn" title="Minimize">
+                <i data-lucide="minus" class="title-bar-icon-svg"></i>
+            </button>
+            <button class="title-bar-button close" id="close-btn" title="Close">
+                <i data-lucide="x" class="title-bar-icon-svg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <nav class="side-navbar">
+            <div class="navbar-header">
+                <div class="navbar-logo">
+                    <img src="assets/icon.png" alt="Stagstation" class="logo-icon">
+                    <div class="logo-text">Stagstation</div>
+                </div>
+                <div class="navbar-subtitle">Save Converter</div>
+            </div>
+
+            <div class="navbar-nav">
+                <button class="nav-item active" data-tab="converter">
+                    <i data-lucide="arrow-left-right" class="nav-icon"></i>
+                    <span class="nav-label">Converter</span>
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <i data-lucide="settings" class="nav-icon"></i>
+                    <span class="nav-label">Settings</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1 id="page-title">Converter</h1>
+                    <p class="content-subtitle" id="page-subtitle">Convert save files between PC and Switch</p>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <!-- Converter Tab -->
+                <div id="converter-tab" class="tab-content active">
+            <div class="game-selection">
+                <div class="game-toggle-container">
+                    <div class="game-toggle">
+                        <button class="game-toggle-option" data-game="hollowknight" id="hollowknight-toggle">
+                            <img src="assets/hollowknight.png" alt="Hollow Knight" class="game-icon" draggable="false">
+                            <span class="game-label">Hollow Knight</span>
+                        </button>
+                        <button class="game-toggle-option" data-game="silksong" id="silksong-toggle">
+                            <img src="assets/silksong.png" alt="Silksong" class="game-icon" draggable="false">
+                            <span class="game-label">Silksong</span>
+                        </button>
+                        <div class="game-toggle-slider" id="game-toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="conversion-section" id="conversion-section" style="display: none;">
+                <div class="direction-buttons">
+                    <button class="direction-btn" data-direction="pc-to-switch">
+                        <span>PC → Switch</span>
+                        <small>Decrypt PC save for Switch</small>
+                    </button>
+                    <button class="direction-btn" data-direction="switch-to-pc">
+                        <span>Switch → PC</span>
+                        <small>Encrypt Switch save for PC</small>
+                    </button>
+                </div>
+
+                <div class="file-selection" id="file-selection" style="display: none;">
+                    <h3>Select Save File</h3>
+                    <div class="file-input-group">
+                        <input type="text" id="input-file-path" readonly placeholder="No file selected">
+                        <button id="browse-input-btn" class="browse-btn">
+                            <i data-lucide="folder" class="browse-icon"></i>
+                            <span>Browse</span>
+                        </button>
+                    </div>
+                    <div class="detected-files" id="detected-files"></div>
+                </div>
+
+                <div class="output-section" id="output-section" style="display: none;">
+                    <h3>Output Location</h3>
+                    <div class="file-input-group">
+                        <input type="text" id="output-file-path" readonly placeholder="Output path will be suggested">
+                        <button id="browse-output-btn" class="browse-btn">
+                            <i data-lucide="folder" class="browse-icon"></i>
+                            <span>Browse</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="convert-section" id="convert-section" style="display: none;">
+                    <button id="convert-btn" class="convert-btn">Convert Save File</button>
+                </div>
+            </div>
+        </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content">
+                    <div class="settings-form">
+                <div class="setting-item">
+                    <label for="pc-save-path">PC Save Path:</label>
+                    <div class="path-input-group">
+                        <input type="text" id="pc-save-path" placeholder="C:\Users\...\AppData\LocalLow\Team Cherry\Hollow Knight">
+                        <button id="browse-pc-path" class="browse-btn">
+                            <i data-lucide="folder" class="browse-icon"></i>
+                            <span>Browse</span>
+                        </button>
+                    </div>
+                    <small>Path to PC save directory (contains user1.dat, user2.dat, etc.)</small>
+                </div>
+
+                <div class="setting-item">
+                    <label for="switch-jksv-path">Switch JKSV Path:</label>
+                    <div class="path-input-group">
+                        <input type="text" id="switch-jksv-path" placeholder="D:\JKSV\Hollow Knight Silksong">
+                        <button id="browse-switch-path" class="browse-btn">
+                            <i data-lucide="folder" class="browse-icon"></i>
+                            <span>Browse</span>
+                        </button>
+                    </div>
+                    <small>Path to Switch JKSV directory (SD card mount point)</small>
+                </div>
+
+                <button id="save-settings-btn" class="save-settings-btn">Save Settings</button>
+                <div id="settings-status" class="status-message"></div>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="node_modules/lucide/dist/umd/lucide.js"></script>
+    <script src="renderer.js"></script>
+</body>
+</html>
+
