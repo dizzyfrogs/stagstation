@@ -19,7 +19,7 @@ export default function AboutTab() {
             }}
           >
             <Image
-              src="/assets/icon.png"
+              src="./assets/icon.png"
               alt="Stagstation"
               w={160}
               h={160}

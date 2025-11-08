@@ -20,7 +20,7 @@ export default function GameSwitcher({ value, onChange }) {
             label: (
               <Group gap="xs" justify="center" wrap="nowrap" style={{ padding: '4px 8px' }}>
                 <Image
-                  src="/assets/hollowknight.png"
+                  src="./assets/hollowknight.png"
                   alt="Hollow Knight"
                   w={36}
                   h={36}
@@ -40,7 +40,7 @@ export default function GameSwitcher({ value, onChange }) {
             label: (
               <Group gap="xs" justify="center" wrap="nowrap" style={{ padding: '4px 8px' }}>
                 <Image
-                  src="/assets/silksong.png"
+                  src="./assets/silksong.png"
                   alt="Silksong"
                   w={36}
                   h={36}

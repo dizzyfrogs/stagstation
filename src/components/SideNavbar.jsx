@@ -101,7 +101,7 @@ export default function SideNavbar({ activeTab, onTabChange }) {
       >
         <Group gap="md" mb="xs" wrap="nowrap">
           <Image
-            src="/assets/icon.png"
+            src="./assets/icon.png"
             alt="Stagstation"
             w={52}
             h={52}

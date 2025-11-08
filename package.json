@@ -1,7 +1,7 @@
 {
   "name": "stagstation",
   "version": "1.0.0",
-  "description": "Save file converter for Hollow Knight and Silksong between PC and Switch",
+  "description": "Save tool for Hollow Knight & Silksong",
   "main": "main.js",
   "homepage": "./",
   "scripts": {
@@ -12,9 +12,9 @@
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron . --dev\"",
     "start": "npm run build && electron .",
     "dist": "npm run build && electron-builder",
-    "dist:win": "npm run build && electron-builder --win",
+    "dist:win": "npm run build && electron-builder --win --config.win.signAndEditExecutable=false",
     "dist:mac": "npm run build && electron-builder --mac",
-    "dist:linux": "npm run build && electron-builder --linux",
+    "dist:linux": "npm run build && electron-builder --linux --config.linux.target=deb",
     "dist:all": "npm run build && electron-builder --win --mac --linux"
   },
   "keywords": [
@@ -28,7 +28,7 @@
     "appId": "com.stagstation.app",
     "productName": "Stagstation",
     "directories": {
-      "output": "dist-packages"
+      "output": "dist-packages-temp"
     },
     "files": [
       "dist/**/*",
@@ -50,7 +50,8 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "forceCodeSigning": false
     },
     "mac": {
       "target": [
@@ -78,7 +79,8 @@
         }
       ],
       "icon": "assets/icon.png",
-      "category": "Utility"
+      "category": "Utility",
+      "synopsis": "Save tool for Hollow Knight & Silksong"
     },
     "nsis": {
       "oneClick": false,
