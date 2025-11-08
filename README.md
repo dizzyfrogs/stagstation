@@ -5,10 +5,12 @@ A desktop application for managing save files for **Hollow Knight** and **Hollow
 ## Features
 
 - **Save Conversion**: Bidirectional conversion between PC and Switch formats
+- **Save Editor**: Edit save files with a powerful visual editor or raw JSON editor with VS Code-style syntax highlighting
 - **Cloud Sync**: Backup and sync your saves with Google Drive
 - **Auto-Detection**: Automatically find save files in configured paths
 - **Meta File Support**: Automatically include `.nx_save_meta.bin` files for Switch saves
 - **Multi-Format Support**: Works with both `.dat` and `.zip` files
+- **Automatic Backups**: Optionally create backups before editing saves
 - **Modern UI**: Built with React and Mantine UI - clean, intuitive interface with smooth animations
 
 ## Why I Built This
@@ -73,7 +75,17 @@ This tool handles:
    - Choose output location (or use the suggested path)
    - Click "Convert Save File"
 
-4. **Cloud Sync (Optional):**
+4. **Edit a Save File:**
+   - Go to the Editor tab
+   - Select the game (Hollow Knight or Silksong)
+   - Choose a save file (auto-detected or browse manually)
+   - Use the **Editor** tab to edit values with a visual interface (checkboxes for booleans, text fields for strings/numbers)
+   - Or use the **Raw JSON** tab to edit directly with full VS Code-style syntax highlighting and validation
+   - Large files automatically use collapsible sections for better performance
+   - Click "Save Changes" to apply your edits
+   - Optionally enable automatic backups in Settings
+
+5. **Cloud Sync (Optional):**
    - Go to the Cloud Sync tab
    - Select your game (Hollow Knight or Silksong)
    - Click "Connect to Google Drive" and follow the authentication flow
@@ -151,6 +163,7 @@ After backing up your save with JKSV, the saves are typically located at:
 - **Frontend**: React 18 with Vite
 - **UI Framework**: Mantine UI
 - **Icons**: Tabler Icons
+- **Code Editor**: Monaco Editor (VS Code editor)
 - **Backend**: Electron (Node.js)
 - **Build Tool**: Vite
 
@@ -178,6 +191,7 @@ stagstation/
 │   │   └── Modal.jsx
 │   ├── tabs/            # Page components
 │   │   ├── ConverterTab.jsx
+│   │   ├── EditorTab.jsx
 │   │   ├── CloudSyncTab.jsx
 │   │   ├── AboutTab.jsx
 │   │   ├── CreditsTab.jsx

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Stack, Title, Text, Paper, Box } from '@mantine/core';
 import ConverterTab from '../tabs/ConverterTab';
+import EditorTab from '../tabs/EditorTab';
 import CloudSyncTab from '../tabs/CloudSyncTab';
 import AboutTab from '../tabs/AboutTab';
 import CreditsTab from '../tabs/CreditsTab';
@@ -8,6 +9,7 @@ import SettingsTab from '../tabs/SettingsTab';
 
 const tabInfo = {
   converter: { title: 'Converter', subtitle: 'Convert save files between PC and Switch' },
+  editor: { title: 'Editor', subtitle: 'Edit save file data' },
   'cloud-sync': { title: 'Cloud Sync', subtitle: 'Sync save files with Google Drive' },
   about: { title: 'About', subtitle: 'Learn about Stagstation' },
   credits: { title: 'Credits', subtitle: 'Acknowledgments and thanks' },
@@ -15,7 +17,7 @@ const tabInfo = {
 };
 
 export default function MainContent({ activeTab, showModal }) {
-  const [pageInfo, setPageInfo] = useState(tabInfo.converter);
+  const [pageInfo, setPageInfo] = useState(tabInfo.editor);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
@@ -34,6 +36,8 @@ export default function MainContent({ activeTab, showModal }) {
     switch (activeTab) {
       case 'converter':
         return <ConverterTab />;
+      case 'editor':
+        return <EditorTab />;
       case 'cloud-sync':
         return <CloudSyncTab showModal={showModal} />;
       case 'about':

@@ -24,6 +24,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   cloudSyncAll: (game, createBackup) => ipcRenderer.invoke('cloud-sync-all', game, createBackup),
   getDefaultSavePath: (game) => ipcRenderer.invoke('get-default-save-path', game),
   getUserDataPath: () => ipcRenderer.invoke('get-user-data-path'),
-  openExternalUrl: (url) => ipcRenderer.invoke('open-external-url', url)
+  openExternalUrl: (url) => ipcRenderer.invoke('open-external-url', url),
+  // Editor APIs
+  readSaveFile: (filePath) => ipcRenderer.invoke('read-save-file', filePath),
+  writeSaveFile: (options) => ipcRenderer.invoke('write-save-file', options)
 });
 

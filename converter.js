@@ -283,5 +283,118 @@ async function detectSaveType(filePath) {
   }
 }
 
-module.exports = { pcToSwitch, switchToPc, detectSaveType };
+// reads a save file and returns it as JSON (decrypts if PC, parses if Switch)
+async function readSaveFileAsJson(filePath) {
+  try {
+    const fileData = await fs.readFile(filePath);
+    
+    if (fileData.length === 0) {
+      throw new Error('File is empty');
+    }
+    
+    // check if it's a PC save (has C# header)
+    if (fileData.length >= 22 && fileData.slice(0, 22).equals(C_SHARP_HEADER)) {
+      // PC save - decrypt it
+      const encryptedData = removeHeader(fileData);
+      
+      // extract base64 data
+      const base64Bytes = [];
+      for (let i = 0; i < encryptedData.length; i++) {
+        const b = encryptedData[i];
+        if ((b >= 65 && b <= 90) || (b >= 97 && b <= 122) || (b >= 48 && b <= 57) || 
+            b === 43 || b === 47 || b === 61) {
+          base64Bytes.push(b);
+        } else if (b === 0) {
+          break;
+        }
+      }
+      
+      if (base64Bytes.length === 0) {
+        throw new Error('No valid Base64 data found');
+      }
+      
+      const base64String = Buffer.from(base64Bytes).toString('ascii');
+      const decodedBuffer = Buffer.from(base64String, 'base64');
+      
+      if (decodedBuffer.length === 0) {
+        throw new Error('Base64 decoded data is empty');
+      }
+      
+      if (decodedBuffer.length % 16 !== 0) {
+        throw new Error('Decoded buffer length is not a multiple of 16');
+      }
+      
+      // decrypt
+      const cipher = crypto.createDecipheriv('aes-256-ecb', AES_KEY, Buffer.alloc(0));
+      cipher.setAutoPadding(false);
+      let decryptedData = Buffer.concat([cipher.update(decodedBuffer), cipher.final()]);
+      
+      // remove PKCS7 padding
+      const padValue = decryptedData[decryptedData.length - 1];
+      if (padValue < 1 || padValue > 16) {
+        throw new Error('Invalid padding value');
+      }
+      
+      for (let i = decryptedData.length - padValue; i < decryptedData.length; i++) {
+        if (decryptedData[i] !== padValue) {
+          throw new Error('Invalid PKCS7 padding');
+        }
+      }
+      
+      decryptedData = decryptedData.slice(0, -padValue);
+      
+      // parse as JSON
+      const jsonText = decryptedData.toString('utf-8');
+      return JSON.parse(jsonText);
+    } else {
+      // Switch save - just parse JSON
+      const text = fileData.toString('utf-8');
+      // remove BOM if present
+      const cleanText = text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text;
+      return JSON.parse(cleanText.trim());
+    }
+  } catch (error) {
+    throw new Error(`Failed to read save file: ${error.message}`);
+  }
+}
+
+// writes JSON data to a save file (encrypts if PC, writes JSON if Switch)
+async function writeSaveFileFromJson(filePath, jsonData, saveType) {
+  try {
+    const jsonText = JSON.stringify(jsonData);
+    const plainData = Buffer.from(jsonText, 'utf-8');
+    
+    if (saveType === 'pc') {
+      // PC save - encrypt it
+      // add PKCS7 padding
+      const padValue = 16 - (plainData.length % 16);
+      const paddedData = Buffer.alloc(plainData.length + padValue);
+      paddedData.fill(padValue);
+      plainData.copy(paddedData);
+      
+      // encrypt with AES-256-ECB
+      const cipher = crypto.createCipheriv('aes-256-ecb', AES_KEY, Buffer.alloc(0));
+      cipher.setAutoPadding(false);
+      
+      const encryptedData = Buffer.concat([cipher.update(paddedData), cipher.final()]);
+      
+      // base64 encode it
+      const encodedData = Buffer.from(encryptedData.toString('base64'), 'ascii');
+      
+      // add the C# header back
+      const finalData = addHeader(encodedData);
+      
+      await fs.writeFile(filePath, finalData);
+    } else {
+      // Switch save - just write JSON
+      await fs.writeFile(filePath, jsonText, 'utf-8');
+    }
+    
+    return true;
+  } catch (error) {
+    throw new Error(`Failed to write save file: ${error.message}`);
+  }
+}
+
+module.exports = { pcToSwitch, switchToPc, detectSaveType, readSaveFileAsJson, writeSaveFileFromJson };
 

@@ -1,5 +1,5 @@
 import { Stack, Title, Text, Card, Group, Image, Box, ThemeIcon, Container, Anchor, Divider } from '@mantine/core';
-import { IconStar, IconArrowLeftRight, IconCloud, IconTools, IconBrandGithub } from '@tabler/icons-react';
+import { IconStar, IconArrowLeftRight, IconCloud, IconEdit, IconBrandGithub } from '@tabler/icons-react';
 
 export default function AboutTab() {
   const handleExternalLink = (e, url) => {
@@ -178,13 +178,13 @@ export default function AboutTab() {
           >
             <Stack gap="md" style={{ flex: 1 }}>
               <ThemeIcon size={64} radius="xl" variant="light" color="violet">
-                <IconTools size={36} />
+                <IconEdit size={36} />
               </ThemeIcon>
               <Title order={3} size="h4">
-                Save Editing
+                Save Editor
               </Title>
               <Text size="sm" c="dimmed" lh={1.7} style={{ flex: 1 }}>
-                Coming soon! Save editing capabilities to customize your playthrough.
+                Edit your save files directly with a powerful visual editor or raw JSON editor. Features VS Code-style syntax highlighting, automatic backups, and collapsible sections for large files.
               </Text>
             </Stack>
           </Card>

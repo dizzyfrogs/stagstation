@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MantineProvider, createTheme, Box, Group, Button } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { IconMinus, IconX, IconMaximize } from '@tabler/icons-react';
@@ -63,8 +63,23 @@ const theme = createTheme({
 });
 
 function App() {
-  const [activeTab, setActiveTab] = useState('converter');
+  const [activeTab, setActiveTab] = useState('editor'); // Default to editor
   const { modal, showModal, handleConfirm, handleCancel } = useModal();
+
+  // Load default page from settings on mount
+  useEffect(() => {
+    const loadDefaultPage = async () => {
+      try {
+        const settings = await window.electronAPI?.readSettings();
+        if (settings?.defaultPage) {
+          setActiveTab(settings.defaultPage);
+        }
+      } catch (error) {
+        console.error('Error loading default page:', error);
+      }
+    };
+    loadDefaultPage();
+  }, []);
 
   const handleMinimize = () => {
     window.electronAPI?.windowMinimize();

@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Card, TextInput, Button, Group, Stack, Text, Checkbox, Radio, Container, Divider, Paper, Badge, Title, Alert, Box, Transition } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconFolder, IconDeviceDesktop, IconCloud, IconAlertTriangle } from '@tabler/icons-react';
+import { IconFolder, IconDeviceDesktop, IconCloud, IconAlertTriangle, IconEdit, IconSettings } from '@tabler/icons-react';
 
 export default function SettingsTab() {
   const [settings, setSettings] = useState({
     pcSavePath: '',
     switchJKSVPath: '',
+    defaultPage: 'editor',
+    editorAutoBackup: true,
+    editorBackupPath: '',
     cloudSync: {
       enabled: false,
       provider: 'google',
@@ -223,6 +226,130 @@ export default function SettingsTab() {
                 <Text size="xs" c="dimmed" ml={4}>
                   Path to Switch JKSV directory (SD card mount point)
                 </Text>
+              </div>
+            </Stack>
+          </Stack>
+        </Card>
+
+        {/* Editor Settings Section */}
+        <Card shadow="md" padding="xl" radius="lg" withBorder>
+          <Stack gap="lg">
+            <Group gap="md" mb="xs">
+              <IconEdit size={32} style={{ color: 'var(--mantine-color-violet-6)' }} />
+              <Title order={3} size="h3" fw={700}>
+                Editor Settings
+              </Title>
+            </Group>
+            <Text size="sm" c="dimmed" mb="md">
+              Configure save editor preferences.
+            </Text>
+
+            <Divider />
+
+            <Stack gap="lg">
+              <div>
+                <Checkbox
+                  label={
+                    <Text fw={600} size="md">
+                      Automatically create backup when saving edits
+                    </Text>
+                  }
+                  checked={settings.editorAutoBackup !== false}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      editorAutoBackup: e.target.checked,
+                    }))
+                  }
+                  mb="xs"
+                />
+                <Text size="xs" c="dimmed" ml={28} mb="md">
+                  Automatically create a backup copy of the save file before applying any edits
+                </Text>
+                {settings.editorAutoBackup !== false && (
+                  <Stack gap="sm" ml={28}>
+                    <Text size="sm" fw={500} c="dimmed">
+                      Backup Directory:
+                    </Text>
+                    <Group gap="sm">
+                      <TextInput
+                        placeholder="Leave empty for default location"
+                        value={settings.editorBackupPath || ''}
+                        onChange={(e) =>
+                          setSettings((prev) => ({
+                            ...prev,
+                            editorBackupPath: e.target.value,
+                          }))
+                        }
+                        style={{ flex: 1 }}
+                        size="md"
+                      />
+                      <Button
+                        leftSection={<IconFolder size={18} />}
+                        onClick={() => handleBrowse('editorBackupPath', true)}
+                        size="md"
+                      >
+                        Browse
+                      </Button>
+                    </Group>
+                    <Text size="xs" c="dimmed">
+                      Directory where backups will be saved{defaultBackupPath ? ` (default: ${defaultBackupPath}/backups)` : ' (default: AppData/Stagstation/backups)'}
+                    </Text>
+                  </Stack>
+                )}
+              </div>
+            </Stack>
+          </Stack>
+        </Card>
+
+        {/* General Settings Section */}
+        <Card shadow="md" padding="xl" radius="lg" withBorder>
+          <Stack gap="lg">
+            <Group gap="md" mb="xs">
+              <IconSettings size={32} style={{ color: 'var(--mantine-color-violet-6)' }} />
+              <Title order={3} size="h3" fw={700}>
+                General Settings
+              </Title>
+            </Group>
+            <Text size="sm" c="dimmed" mb="md">
+              Configure general application preferences.
+            </Text>
+
+            <Divider />
+
+            <Stack gap="lg">
+              <div>
+                <Text
+                  fw={600}
+                  size="md"
+                  mb="xs"
+                  style={{
+                    background: 'linear-gradient(135deg, #8b6fa8 0%, #4a90e2 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Default Page
+                </Text>
+                <Text size="xs" c="dimmed" mb="md">
+                  Choose which page to show when the application starts
+                </Text>
+                <Radio.Group
+                  value={settings.defaultPage || 'editor'}
+                  onChange={(value) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      defaultPage: value,
+                    }))
+                  }
+                >
+                  <Stack gap="sm">
+                    <Radio value="editor" label="Editor" />
+                    <Radio value="converter" label="Converter" />
+                    <Radio value="cloud-sync" label="Cloud Sync" />
+                  </Stack>
+                </Radio.Group>
               </div>
             </Stack>
           </Stack>

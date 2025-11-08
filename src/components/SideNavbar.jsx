@@ -1,7 +1,8 @@
 import { NavLink, Stack, Group, Text, Image, Box } from '@mantine/core';
-import { IconArrowLeftRight, IconCloud, IconInfoCircle, IconHeart, IconSettings } from '@tabler/icons-react';
+import { IconArrowLeftRight, IconCloud, IconInfoCircle, IconHeart, IconSettings, IconEdit } from '@tabler/icons-react';
 
 const navItems = [
+  { id: 'editor', icon: IconEdit, label: 'Editor' },
   { id: 'converter', icon: IconArrowLeftRight, label: 'Converter' },
   { id: 'cloud-sync', icon: IconCloud, label: 'Cloud Sync' },
 ];

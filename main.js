@@ -120,7 +120,7 @@ ipcMain.handle('save-file', async (event, defaultPath) => {
   return null;
 });
 
-const { pcToSwitch, switchToPc, detectSaveType } = require('./converter.js');
+const { pcToSwitch, switchToPc, detectSaveType, readSaveFileAsJson, writeSaveFileFromJson } = require('./converter.js');
 
 // get hollow knight save path based on OS
 function getHollowKnightSavePath() {
@@ -348,11 +348,26 @@ ipcMain.handle('read-settings', async () => {
         customPath: ''
       };
     }
+    // ensure editorAutoBackup exists
+    if (settings.editorAutoBackup === undefined) {
+      settings.editorAutoBackup = true;
+    }
+    // ensure editorBackupPath exists
+    if (settings.editorBackupPath === undefined) {
+      settings.editorBackupPath = '';
+    }
+    // ensure defaultPage exists
+    if (!settings.defaultPage) {
+      settings.defaultPage = 'editor';
+    }
     return settings;
   } catch (error) {
     return {
       pcSavePath: '',
       switchJKSVPath: '',
+      defaultPage: 'editor',
+      editorAutoBackup: true,
+      editorBackupPath: '',
       cloudSync: {
         enabled: false,
         provider: 'google',
@@ -436,11 +451,26 @@ async function readSettingsSync() {
         customPath: ''
       };
     }
+    // ensure editorAutoBackup exists
+    if (settings.editorAutoBackup === undefined) {
+      settings.editorAutoBackup = true;
+    }
+    // ensure editorBackupPath exists
+    if (settings.editorBackupPath === undefined) {
+      settings.editorBackupPath = '';
+    }
+    // ensure defaultPage exists
+    if (!settings.defaultPage) {
+      settings.defaultPage = 'editor';
+    }
     return settings;
   } catch (error) {
     return {
       pcSavePath: '',
       switchJKSVPath: '',
+      defaultPage: 'editor',
+      editorAutoBackup: true,
+      editorBackupPath: '',
       cloudSync: {
         enabled: false,
         provider: 'google',
@@ -709,6 +739,58 @@ ipcMain.handle('open-external-url', async (event, url) => {
 
 ipcMain.handle('get-user-data-path', async () => {
   return { success: true, path: app.getPath('userData') };
+});
+
+// read save file as JSON
+ipcMain.handle('read-save-file', async (event, filePath) => {
+  try {
+    const jsonData = await readSaveFileAsJson(filePath);
+    return { success: true, data: jsonData };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// write save file from JSON
+ipcMain.handle('write-save-file', async (event, { filePath, data, saveType, createBackup }) => {
+  try {
+    // create backup if requested (before writing)
+    let backupPath = null;
+    if (createBackup) {
+      try {
+        // check if file exists before backing up
+        await fs.access(filePath);
+        const settings = await readSettingsSync();
+        const fileName = path.basename(filePath, path.extname(filePath));
+        const fileExt = path.extname(filePath);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        
+        // Use custom backup path if specified, otherwise use default (next to file or appdata)
+        let backupDir;
+        if (settings.editorBackupPath && settings.editorBackupPath.trim() !== '') {
+          backupDir = settings.editorBackupPath;
+        } else {
+          // Default: next to the file
+          backupDir = path.join(path.dirname(filePath), 'backups');
+        }
+        
+        // ensure backup directory exists
+        await fs.mkdir(backupDir, { recursive: true });
+        
+        backupPath = path.join(backupDir, `${fileName}_backup_${timestamp}${fileExt}`);
+        await fs.copyFile(filePath, backupPath);
+      } catch (backupError) {
+        // if backup fails, log but don't fail the save
+        console.warn('Failed to create backup:', backupError.message);
+      }
+    }
+    
+    // write the file
+    await writeSaveFileFromJson(filePath, data, saveType);
+    return { success: true, backupPath: backupPath };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 });
 
 ipcMain.handle('cloud-sync-all', async (event, game, createBackup) => {

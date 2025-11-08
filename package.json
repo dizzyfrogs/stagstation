@@ -34,6 +34,7 @@
     "@mantine/core": "^7.5.0",
     "@mantine/hooks": "^7.5.0",
     "@mantine/notifications": "^7.5.0",
+    "@monaco-editor/react": "^4.7.0",
     "@tabler/icons-react": "^3.0.0",
     "adm-zip": "^0.5.16",
     "googleapis": "^165.0.0",
@@ -42,5 +43,3 @@
     "react-dom": "^18.2.0"
   }
 }
-
-
