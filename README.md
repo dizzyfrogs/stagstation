@@ -1,21 +1,23 @@
 # Stagstation
 
-A desktop application for converting save files between PC and Switch formats for **Hollow Knight** and **Hollow Knight: Silksong**.
+A desktop application for managing save files for **Hollow Knight** and **Hollow Knight: Silksong**. Convert saves between PC and Switch formats, sync with Google Drive, and more.
 
 ## Features
 
-- Support for both Hollow Knight and Silksong
-- Bidirectional conversion: PC ↔ Switch
-- Auto-detection of save files
-- File picker for manual selection
-- Configurable save paths
-- Modern, intuitive UI
+- **Save Conversion**: Bidirectional conversion between PC and Switch formats
+- **Cloud Sync**: Backup and sync your saves with Google Drive
+- **Auto-Detection**: Automatically find save files in configured paths
+- **Meta File Support**: Automatically include `.nx_save_meta.bin` files for Switch saves
+- **Multi-Format Support**: Works with both `.dat` and `.zip` files
+- **Modern UI**: Clean, intuitive interface with real-time status indicators
 
-## Why I Made This
+## Why I Built This
 
-I've been really getting into Hollow Knight and Silksong on Steam, but I wanted to play them on my TV using my homebrewed Switch. The existing workflow was tedious - using a converter tool, ejecting my SD card, navigating through JKSV, copying files around... it was a hassle every time I wanted to sync my progress.
+This project originally started as a tool to streamline transferring my save files between my Switch and PC. I quickly realized that tools for this already exist, but I decided to combine and streamline them anyway as a way to learn about using certain technologies.
 
-I noticed there were already some similar tools out there, but I was excited about the idea of learning how to build a desktop app. So I decided to make my own all-in-one tool that streamlines the whole process. This project was a great learning experience in Electron, and now I have a tool that makes switching between PC and Switch saves way less annoying.
+This project has been a great learning experience, and now I have a tool that makes managing saves for these amazing games seamless and enjoyable.
+
+Built with passion for the **Hollow Knight community**.
 
 ## How It Works
 
@@ -55,9 +57,18 @@ This tool handles:
 3. **Convert a Save File:**
    - Select the game (Hollow Knight or Silksong)
    - Choose conversion direction (PC → Switch or Switch → PC)
-   - Click "Auto Detect" to find save files, or use "Browse" to select manually
+   - Stagstation will auto detect save files, or you can use "Browse" to select manually
    - Choose output location (or use the suggested path)
    - Click "Convert Save File"
+
+4. **Cloud Sync (Optional):**
+   - Go to the Cloud Sync tab
+   - Select your game (Hollow Knight or Silksong)
+   - Click "Connect to Google Drive" and follow the authentication flow
+   - View your cloud saves with status indicators (Local Newer, Cloud Newer, In Sync)
+   - Upload or download saves directly from the interface
+   
+   **Note:** For information on setting up Google Drive API credentials, see the [JKSV Google Drive setup guide](https://switch.hacks.guide/homebrew/jksv.html?tab=google-drive#setting-up-remote-save-data-backups-google-drive-webdav). Stagstation uses OAuth2 device flow for authentication, which is handled automatically during the connection process.
 
 ## Save File Locations
 
@@ -80,6 +91,9 @@ This tool handles:
 After backing up your save with JKSV, the saves are typically located at:
 - `[SD_Card]:\JKSV\Hollow Knight\` or `[SD_Card]:\JKSV\Hollow Knight Silksong\`
 - Files: `user1.dat`, `user2.dat`, etc. (plain JSON format)
+- Also supports `.zip` files containing save data
+
+**Note:** When converting PC saves to Switch format, you can enable automatic inclusion of `.nx_save_meta.bin` files in the Settings. This prevents the "Backup contains no meta file!" error in JKSV. The tool can automatically pull the meta file from your most recent cloud save, or you can specify a custom path.
 
 ## Technical Details
 
@@ -109,8 +123,14 @@ After backing up your save with JKSV, the saves are typically located at:
 
 ### Auto-Detect Doesn't Work
 - Make sure you've set the correct paths in Settings
-- Verify the directories exist and contain `.dat` files
+- Verify the directories exist and contain `.dat` or `.zip` files
 - Try using the Browse button instead
+
+### Cloud Sync Issues
+- Ensure you're connected to Google Drive (check the status indicator)
+- Verify you have internet connectivity
+- If authentication fails, try disconnecting and reconnecting
+- Check that you have the necessary permissions for the Google Drive folder
 
 ## Development
 
@@ -121,6 +141,7 @@ stagstation/
 ├── main.js           # Electron main process
 ├── preload.js        # Preload script (IPC bridge)
 ├── converter.js      # Save file conversion logic
+├── cloud-sync.js     # Google Drive integration
 ├── index.html        # UI markup
 ├── styles.css        # UI styles
 ├── renderer.js       # UI logic and particle system
@@ -145,11 +166,14 @@ This tool is for personal use only. Make backups of your save files before conve
 
 ## Credits
 
-**Save File Conversion Logic:**
-- The encryption/decryption and save file conversion logic for Switch compatibility is based on the work from [bloodorca/hollow](https://github.com/bloodorca/hollow). This online save file editor provided the foundation for understanding how to handle the C# binary headers, AES encryption, and format conversion.
+**Created By:**
+- [dizzyfrogs](https://github.com/dizzyfrogs)
 
-**UI Inspiration & Features:**
-- UI design and several features were inspired by [ArixAR/hollow-sync](https://github.com/ArixAR/hollow-sync). Their desktop application approach and workflow improvements influenced the design of this tool.
+**Save File Conversion:**
+- Conversion logic based on [bloodorca/hollow](https://github.com/bloodorca/hollow)
+
+**UI & Sync Features:**
+- Influenced by [ArixAR/hollow-sync](https://github.com/ArixAR/hollow-sync)
 
 **Special Thanks:**
 - This tool was created for the Hollow Knight community. Special thanks to Team Cherry for creating these amazing games!
