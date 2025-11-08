@@ -214,6 +214,57 @@ Stagstation offers several customizable settings:
    npm start
    ```
 
+### Building for Distribution
+
+Stagstation uses **electron-builder** to create distributable packages for all platforms.
+
+#### Quick Build
+
+Build for your current platform:
+```bash
+npm run dist
+```
+
+#### Platform-Specific Builds
+
+**Windows:**
+```bash
+npm run dist:win
+```
+Creates:
+- NSIS installer (`.exe`) for x64 and ia32
+- Portable version (`.exe`) for x64
+
+**macOS:**
+```bash
+npm run dist:mac
+```
+Creates:
+- DMG installer for x64 and arm64 (Apple Silicon)
+- ZIP archive for x64 and arm64
+
+**Note:** Building macOS packages requires macOS. For cross-platform builds, use CI/CD.
+
+**Linux:**
+```bash
+npm run dist:linux
+```
+Creates:
+- AppImage (`.AppImage`) for x64
+- Debian package (`.deb`) for x64
+
+#### Build for All Platforms
+
+```bash
+npm run dist:all
+```
+
+**Note:** This will attempt to build for all platforms. macOS builds require macOS, but Windows and Linux can be built from any platform.
+
+#### Output Location
+
+All built packages are saved to the `dist-packages/` directory.
+
 ### Tech Stack
 
 - **Frontend**: React 18 with Vite
