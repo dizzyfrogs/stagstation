@@ -22,13 +22,16 @@
     "silksong",
     "save-converter"
   ],
-  "author": "",
+  "author": {
+    "name": "dizzyfrogs",
+    "url": "https://github.com/dizzyfrogs"
+  },
   "license": "MIT",
   "build": {
     "appId": "com.stagstation.app",
     "productName": "Stagstation",
     "directories": {
-      "output": "dist-packages-temp"
+      "output": "dist-packages"
     },
     "files": [
       "dist/**/*",
@@ -80,7 +83,8 @@
       ],
       "icon": "assets/icon.png",
       "category": "Utility",
-      "synopsis": "Save tool for Hollow Knight & Silksong"
+      "synopsis": "Save tool for Hollow Knight & Silksong",
+      "maintainer": "dizzyfrogs <dizzyfrogs@users.noreply.github.com>"
     },
     "nsis": {
       "oneClick": false,
