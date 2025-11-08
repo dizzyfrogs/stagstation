@@ -2,9 +2,11 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   selectFile: () => ipcRenderer.invoke('select-file'),
+  selectJsonFile: () => ipcRenderer.invoke('select-json-file'),
   selectDirectory: () => ipcRenderer.invoke('select-directory'),
   saveFile: (defaultPath) => ipcRenderer.invoke('save-file', defaultPath),
   convertSave: (options) => ipcRenderer.invoke('convert-save', options),
+  detectSaveType: (filePath) => ipcRenderer.invoke('detect-save-type', filePath),
   detectSaveFiles: (options) => ipcRenderer.invoke('detect-save-files', options),
   readSettings: () => ipcRenderer.invoke('read-settings'),
   writeSettings: (settings) => ipcRenderer.invoke('write-settings', settings),

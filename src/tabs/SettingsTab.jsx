@@ -108,10 +108,15 @@ export default function SettingsTab() {
     }
   };
 
-  const handleBrowse = async (field, isDirectory = true) => {
-    const path = isDirectory
-      ? await window.electronAPI?.selectDirectory()
-      : await window.electronAPI?.selectFile();
+  const handleBrowse = async (field, isDirectory = true, isJsonFile = false) => {
+    let path;
+    if (isDirectory) {
+      path = await window.electronAPI?.selectDirectory();
+    } else if (isJsonFile) {
+      path = await window.electronAPI?.selectJsonFile();
+    } else {
+      path = await window.electronAPI?.selectFile();
+    }
     if (path) {
       if (field.includes('.')) {
         const parts = field.split('.');
@@ -274,7 +279,7 @@ export default function SettingsTab() {
                   />
                   <Button
                     leftSection={<IconFolder size={18} />}
-                    onClick={() => handleBrowse('cloudSync.googleDrive.credentialsPath', false)}
+                    onClick={() => handleBrowse('cloudSync.googleDrive.credentialsPath', false, true)}
                     size="md"
                   >
                     Browse

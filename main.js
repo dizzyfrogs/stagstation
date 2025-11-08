@@ -79,6 +79,21 @@ ipcMain.handle('select-file', async () => {
   return null;
 });
 
+ipcMain.handle('select-json-file', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'JSON Files', extensions: ['json'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths[0];
+  }
+  return null;
+});
+
 ipcMain.handle('select-directory', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory']
@@ -105,7 +120,7 @@ ipcMain.handle('save-file', async (event, defaultPath) => {
   return null;
 });
 
-const { pcToSwitch, switchToPc } = require('./converter.js');
+const { pcToSwitch, switchToPc, detectSaveType } = require('./converter.js');
 
 // get hollow knight save path based on OS
 function getHollowKnightSavePath() {
@@ -138,6 +153,15 @@ function getSilksongSavePath() {
     return path.join(homeDir, 'AppData', 'LocalLow', 'Team Cherry', 'Hollow Knight Silksong');
   }
 }
+
+ipcMain.handle('detect-save-type', async (event, filePath) => {
+  try {
+    const result = await detectSaveType(filePath);
+    return result;
+  } catch (error) {
+    return { type: 'unknown', error: error.message };
+  }
+});
 
 ipcMain.handle('convert-save', async (event, { game, direction, inputPath, outputPath }) => {
   try {

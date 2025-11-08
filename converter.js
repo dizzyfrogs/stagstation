@@ -255,5 +255,33 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { pcToSwitch, switchToPc };
+// detect if a file is a PC save or Switch save
+async function detectSaveType(filePath) {
+  try {
+    const fileData = await fs.readFile(filePath);
+    
+    if (fileData.length === 0) {
+      return { type: 'unknown', error: 'File is empty' };
+    }
+    
+    // check if it starts with C# header (PC save)
+    if (fileData.length >= 22 && fileData.slice(0, 22).equals(C_SHARP_HEADER)) {
+      return { type: 'pc', success: true };
+    }
+    
+    // check if it's valid JSON (Switch save)
+    try {
+      const text = fileData.toString('utf-8');
+      JSON.parse(text);
+      return { type: 'switch', success: true };
+    } catch {
+      // not valid JSON, might be PC save without header check or corrupted
+      return { type: 'unknown', error: 'File does not appear to be a valid PC or Switch save' };
+    }
+  } catch (error) {
+    return { type: 'unknown', error: error.message };
+  }
+}
+
+module.exports = { pcToSwitch, switchToPc, detectSaveType };
 

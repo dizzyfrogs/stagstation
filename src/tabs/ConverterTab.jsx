@@ -129,6 +129,70 @@ export default function ConverterTab() {
       return;
     }
 
+    // detect file types to prevent invalid conversions
+    try {
+      const inputType = await window.electronAPI?.detectSaveType(inputFilePath);
+      const outputType = await window.electronAPI?.detectSaveType(outputFilePath);
+
+      // check if output file already exists and is a different type than expected
+      if (outputType?.success) {
+        if (selectedDirection === 'pc-to-switch' && outputType.type === 'pc') {
+          notifications.show({
+            title: 'Invalid Output File',
+            message: 'Output file appears to be a PC save file. For PC → Switch conversion, the output should be a Switch format file. Please choose a different output location.',
+            color: 'red',
+          });
+          return;
+        }
+        if (selectedDirection === 'switch-to-pc' && outputType.type === 'switch') {
+          notifications.show({
+            title: 'Invalid Output File',
+            message: 'Output file appears to be a Switch save file. For Switch → PC conversion, the output should be a PC format file. Please choose a different output location.',
+            color: 'red',
+          });
+          return;
+        }
+      }
+
+      // validate input file type matches the selected direction
+      if (inputType?.success) {
+        if (selectedDirection === 'pc-to-switch' && inputType.type !== 'pc') {
+          notifications.show({
+            title: 'Invalid Input File',
+            message: `Selected file appears to be a ${inputType.type === 'switch' ? 'Switch' : 'unknown'} save file. For PC → Switch conversion, please select a PC format save file.`,
+            color: 'red',
+          });
+          return;
+        }
+        if (selectedDirection === 'switch-to-pc' && inputType.type !== 'switch') {
+          notifications.show({
+            title: 'Invalid Input File',
+            message: `Selected file appears to be a ${inputType.type === 'pc' ? 'PC' : 'unknown'} save file. For Switch → PC conversion, please select a Switch format save file (from JKSV).`,
+            color: 'red',
+          });
+          return;
+        }
+      }
+
+      // additional path-based validation for safety
+      if (selectedDirection === 'pc-to-switch' && settings.pcSavePath) {
+        const normalizedPcPath = settings.pcSavePath.replace(/\\/g, '/').toLowerCase();
+        const normalizedOutput = outputFilePath.replace(/\\/g, '/').toLowerCase();
+        
+        if (normalizedOutput.includes(normalizedPcPath)) {
+          notifications.show({
+            title: 'Invalid Output Location',
+            message: 'Cannot save Switch format file to PC save directory. This would overwrite your PC save file. Please choose a different output location (e.g., your Switch JKSV folder).',
+            color: 'red',
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      // if detection fails, show warning but allow user to proceed
+      console.warn('File type detection failed:', error);
+    }
+
     setConverting(true);
     try {
       const result = await window.electronAPI?.convertSave({
