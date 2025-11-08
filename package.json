@@ -18,10 +18,10 @@
     "electron": "^28.0.0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
+    "googleapis": "^165.0.0",
     "lucide": "^0.552.0"
   }
 }
-
-
 
 

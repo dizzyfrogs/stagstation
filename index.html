@@ -30,18 +30,34 @@
                     <img src="assets/icon.png" alt="Stagstation" class="logo-icon">
                     <div class="logo-text">Stagstation</div>
                 </div>
-                <div class="navbar-subtitle">Save Converter</div>
+                <div class="navbar-subtitle">Save Tool</div>
             </div>
 
-            <div class="navbar-nav">
-                <button class="nav-item active" data-tab="converter">
-                    <i data-lucide="arrow-left-right" class="nav-icon"></i>
-                    <span class="nav-label">Converter</span>
-                </button>
-                <button class="nav-item" data-tab="settings">
-                    <i data-lucide="settings" class="nav-icon"></i>
-                    <span class="nav-label">Settings</span>
-                </button>
+            <div class="navbar-nav-wrapper">
+                <div class="navbar-nav">
+                    <button class="nav-item active" data-tab="converter">
+                        <i data-lucide="arrow-left-right" class="nav-icon"></i>
+                        <span class="nav-label">Converter</span>
+                    </button>
+                    <button class="nav-item" data-tab="cloud-sync">
+                        <i data-lucide="cloud" class="nav-icon"></i>
+                        <span class="nav-label">Cloud Sync</span>
+                    </button>
+                </div>
+                <div class="navbar-nav-bottom">
+                    <button class="nav-item" data-tab="about">
+                        <i data-lucide="info" class="nav-icon"></i>
+                        <span class="nav-label">About</span>
+                    </button>
+                    <button class="nav-item" data-tab="credits">
+                        <i data-lucide="heart" class="nav-icon"></i>
+                        <span class="nav-label">Credits</span>
+                    </button>
+                    <button class="nav-item" data-tab="settings">
+                        <i data-lucide="settings" class="nav-icon"></i>
+                        <span class="nav-label">Settings</span>
+                    </button>
+                </div>
             </div>
         </nav>
 
@@ -113,6 +129,150 @@
             </div>
         </div>
 
+                <!-- Cloud Sync Tab -->
+                <div id="cloud-sync-tab" class="tab-content">
+                    <div class="cloud-sync-container">
+                        <div class="game-selection-cloud">
+                            <div class="game-toggle-container">
+                                <div class="game-toggle">
+                                    <button class="game-toggle-option" data-game="hollowknight" id="cloud-hollowknight-toggle">
+                                        <img src="assets/hollowknight.png" alt="Hollow Knight" class="game-icon" draggable="false">
+                                        <span class="game-label">Hollow Knight</span>
+                                    </button>
+                                    <button class="game-toggle-option" data-game="silksong" id="cloud-silksong-toggle">
+                                        <img src="assets/silksong.png" alt="Silksong" class="game-icon" draggable="false">
+                                        <span class="game-label">Silksong</span>
+                                    </button>
+                                    <div class="game-toggle-slider" id="cloud-game-toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cloud-sync-controls">
+                            <button id="connect-cloud-btn" class="connect-btn">
+                                <span class="connect-btn-text">Connect to Google Drive</span>
+                            </button>
+                            
+                            <div class="sync-status">
+                                <span class="status-dot" id="status-dot"></span>
+                                <span id="cloud-connection-status" class="connection-status">Not connected</span>
+                            </div>
+                        </div>
+
+                        <div class="cloud-sync-slots" id="cloud-sync-slots">
+                            <!-- Slot cards will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About Tab -->
+                <div id="about-tab" class="tab-content">
+                    <div class="about-container">
+                        <div class="about-hero">
+                            <div class="about-hero-icon">
+                                <img src="assets/icon.png" alt="Stagstation" class="about-hero-icon-img">
+                            </div>
+                            <h1>Stagstation</h1>
+                            <p class="about-hero-subtitle">Your all-in-one save tool for Hollow Knight & Silksong</p>
+                        </div>
+
+                        <div class="about-grid">
+                            <div class="about-card about-card-featured">
+                                <div class="about-card-icon">
+                                    <i data-lucide="sparkles"></i>
+                                </div>
+                                <h2>What is Stagstation?</h2>
+                                <p>Stagstation is a comprehensive desktop application built for the Hollow Knight community. It's your complete toolkit for managing save files across platforms, with powerful features to help you get the most out of your playthroughs.</p>
+                            </div>
+
+                            <div class="about-card">
+                                <div class="about-card-icon">
+                                    <i data-lucide="arrow-left-right"></i>
+                                </div>
+                                <h2>Save Conversion</h2>
+                                <p>Seamlessly convert saves between PC and Switch formats. Play on your PC, continue on your Switch or vice versa. Stagstation handles all the technical complexity behind the scenes.</p>
+                            </div>
+
+                            <div class="about-card">
+                                <div class="about-card-icon">
+                                    <i data-lucide="cloud"></i>
+                                </div>
+                                <h2>Cloud Sync</h2>
+                                <p>Keep your saves backed up and synchronized with Google Drive. Never lose your progress, and easily access your saves from anywhere.</p>
+                            </div>
+
+                            <div class="about-card">
+                                <div class="about-card-icon">
+                                    <i data-lucide="wrench"></i>
+                                </div>
+                                <h2>Save Editing</h2>
+                                <p>Coming soon! Save editing capabilities to customize your playthrough.</p>
+                            </div>
+                        </div>
+
+                        <div class="about-story">
+                            <div class="about-story-content">
+                                <h2>Why I Built This</h2>
+                                <p>This project originally started as a tool to streamline transferring my save files between my Switch and PC. I quickly realized that tools for this already exist, but I decided to combine and streamline them anyway as a way to learn about using certain technologies.</p>
+                                <p>This project has been a great learning experience, and now I have a tool that makes managing saves for these amazing games seamless and enjoyable.</p>
+                                <p class="about-story-community">Built with passion for the <strong>Hollow Knight community</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credits Tab -->
+                <div id="credits-tab" class="tab-content">
+                    <div class="credits-container">
+                        <div class="credits-header">
+                            <h1>Credits & Acknowledgments</h1>
+                            <p class="credits-intro">This project was made possible thanks to the following:</p>
+                        </div>
+
+                        <div class="credits-grid">
+                            <div class="credit-item credit-item-featured">
+                                <div class="credit-icon">
+                                    <i data-lucide="sparkles"></i>
+                                </div>
+                                <h3>Created By</h3>
+                                <p><a href="https://github.com/dizzyfrogs" target="_blank" rel="noopener noreferrer" class="credit-link-external"><strong>dizzyfrogs</strong></a></p>
+                            </div>
+
+                            <div class="credit-item">
+                                <div class="credit-icon">
+                                    <i data-lucide="code"></i>
+                                </div>
+                                <h3>Save File Conversion</h3>
+                                <p>Conversion logic based on <a href="https://github.com/bloodorca/hollow" target="_blank" rel="noopener noreferrer" class="credit-link-external">bloodorca/hollow</a></p>
+                            </div>
+
+                            <div class="credit-item">
+                                <div class="credit-icon">
+                                    <i data-lucide="palette"></i>
+                                </div>
+                                <h3>UI & Sync Features</h3>
+                                <p>Influenced by <a href="https://github.com/ArixAR/hollow-sync" target="_blank" rel="noopener noreferrer" class="credit-link-external">ArixAR/hollow-sync</a></p>
+                            </div>
+
+                            <div class="credit-item">
+                                <div class="credit-icon">
+                                    <i data-lucide="gamepad-2"></i>
+                                </div>
+                                <h3>Special Thanks</h3>
+                                <p>Thanks to <strong>Team Cherry</strong> for creating these amazing games!</p>
+                            </div>
+
+                            <div class="credit-item">
+                                <div class="credit-icon">
+                                    <i data-lucide="file-text"></i>
+                                </div>
+                                <h3>License</h3>
+                                <p>MIT License</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
                     <div class="settings-form">
@@ -140,16 +300,107 @@
                     <small>Path to Switch JKSV directory (SD card mount point)</small>
                 </div>
 
-                <button id="save-settings-btn" class="save-settings-btn">Save Settings</button>
-                <div id="settings-status" class="status-message"></div>
+                <div class="setting-item">
+                    <label for="cloud-credentials-path">Google Drive Credentials:</label>
+                    <div class="path-input-group">
+                        <input type="text" id="cloud-credentials-path" placeholder="Path to client_secret.json">
+                        <button id="browse-credentials-path" class="browse-btn">
+                            <i data-lucide="folder" class="browse-icon"></i>
+                            <span>Browse</span>
+                        </button>
+                    </div>
+                    <small>Path to your Google Drive OAuth credentials file (client_secret.json)</small>
+                </div>
+
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="cloud-meta-file-enabled" checked>
+                        Include .nx_save_meta.bin in uploads
+                    </label>
+                    <small>Automatically include meta file to prevent "Backup contains no meta file!" errors in JKSV</small>
+                    
+                    <div id="meta-file-options" style="margin-top: var(--spacing-md); display: block;">
+                        <label style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-secondary); font-size: 0.9em;">Meta File Source:</label>
+                        <div style="margin-bottom: var(--spacing-sm);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                                <input type="radio" name="meta-file-mode" value="auto" checked>
+                                <span>Auto-pull from most recent cloud save</span>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: var(--spacing-sm);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                                <input type="radio" name="meta-file-mode" value="custom">
+                                <span>Use custom file</span>
+                            </label>
+                        </div>
+                        <div id="meta-file-custom-container" style="margin-top: var(--spacing-sm); display: none;">
+                            <div class="path-input-group">
+                                <input type="text" id="meta-file-custom-path" placeholder="Path to .nx_save_meta.bin file">
+                                <button id="browse-meta-file" class="browse-btn">
+                                    <i data-lucide="folder" class="browse-icon"></i>
+                                    <span>Browse</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="cloud-backup-enabled" checked>
+                        Create backups before cloud sync
+                    </label>
+                    <small>Automatically backup local saves before overwriting with cloud versions</small>
+                    
+                    <div id="backup-path-container" style="margin-top: var(--spacing-md); display: block;">
+                        <label for="backup-path" style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-secondary); font-size: 0.9em; margin-top: var(--spacing-md);">Backup Directory:</label>
+                        <div class="path-input-group">
+                            <input type="text" id="backup-path" placeholder="Leave empty for default location">
+                            <button id="browse-backup-path" class="browse-btn">
+                                <i data-lucide="folder" class="browse-icon"></i>
+                                <span>Browse</span>
+                            </button>
+                        </div>
+                        <small>Directory where backups will be saved (default: AppData/Stagstation/backups)</small>
+                    </div>
+                </div>
             </div>
         </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Unsaved Changes Indicator -->
+    <div id="unsaved-changes-indicator" class="unsaved-changes-indicator" style="display: none;">
+        <div class="unsaved-changes-content">
+            <span>⚠️ You have unsaved changes</span>
+            <div style="display: flex; gap: var(--spacing-md);">
+                <button id="cancel-settings-btn-floating" class="cancel-settings-btn-floating">Cancel</button>
+                <button id="save-settings-btn-floating" class="save-settings-btn-floating">Save Settings</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
+
+    <!-- Modal Dialog -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="modal-title">Dialog</h3>
+                <button id="modal-close" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message"></p>
+                <input type="text" id="modal-input" class="modal-input" style="display: none;" placeholder="">
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel" class="modal-btn modal-btn-cancel">Cancel</button>
+                <button id="modal-confirm" class="modal-btn modal-btn-confirm">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script src="node_modules/lucide/dist/umd/lucide.js"></script>
     <script src="renderer.js"></script>
