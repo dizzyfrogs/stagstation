@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   cloudDownloadSlot: (game, slotNumber, localPath, saveId, fileId, entryName, createBackup) => ipcRenderer.invoke('cloud-download-slot', game, slotNumber, localPath, saveId, fileId, entryName, createBackup),
   cloudSyncAll: (game, createBackup) => ipcRenderer.invoke('cloud-sync-all', game, createBackup),
   getDefaultSavePath: (game) => ipcRenderer.invoke('get-default-save-path', game),
+  getUserDataPath: () => ipcRenderer.invoke('get-user-data-path'),
   openExternalUrl: (url) => ipcRenderer.invoke('open-external-url', url)
 });
 

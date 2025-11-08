@@ -9,7 +9,7 @@ A desktop application for managing save files for **Hollow Knight** and **Hollow
 - **Auto-Detection**: Automatically find save files in configured paths
 - **Meta File Support**: Automatically include `.nx_save_meta.bin` files for Switch saves
 - **Multi-Format Support**: Works with both `.dat` and `.zip` files
-- **Modern UI**: Clean, intuitive interface with real-time status indicators
+- **Modern UI**: Built with React and Mantine UI - clean, intuitive interface with smooth animations
 
 ## Why I Built This
 
@@ -32,6 +32,7 @@ This tool handles:
 ## Prerequisites
 
 - **Node.js** (v16 or higher)
+- **npm** (comes with Node.js)
 
 ## Installation
 
@@ -44,10 +45,21 @@ This tool handles:
 
 ## Usage
 
-1. **Start the application:**
+### Running in Development Mode
+
+1. **Start the development server:**
+   ```bash
+   npm run electron:dev
+   ```
+   This will start the Vite dev server and launch Electron automatically.
+
+### Running in Production Mode
+
+1. **Build and start the application:**
    ```bash
    npm start
    ```
+   This builds the React app and launches Electron with the production build.
 
 2. **Configure Settings:**
    - Go to the Settings tab
@@ -134,27 +146,67 @@ After backing up your save with JKSV, the saves are typically located at:
 
 ## Development
 
+### Tech Stack
+
+- **Frontend**: React 18 with Vite
+- **UI Framework**: Mantine UI
+- **Icons**: Tabler Icons
+- **Backend**: Electron (Node.js)
+- **Build Tool**: Vite
+
 ### Project Structure
 
 ```
 stagstation/
-├── main.js           # Electron main process
-├── preload.js        # Preload script (IPC bridge)
-├── converter.js      # Save file conversion logic
-├── cloud-sync.js     # Google Drive integration
-├── index.html        # UI markup
-├── styles.css        # UI styles
-├── renderer.js       # UI logic and particle system
-├── package.json      # Node.js dependencies
-├── assets/           # Images and fonts
-└── LICENSE           # MIT License
+├── main.js              # Electron main process
+├── preload.js           # Preload script (IPC bridge)
+├── converter.js         # Save file conversion logic
+├── cloud-sync.js        # Google Drive integration
+├── index.html           # HTML entry point
+├── vite.config.js       # Vite configuration
+├── package.json         # Node.js dependencies
+├── assets/              # Images and fonts
+├── src/                 # React source code
+│   ├── main.jsx         # React entry point
+│   ├── App.jsx          # Main app component
+│   ├── index.css         # Global styles
+│   ├── components/      # React components
+│   │   ├── SideNavbar.jsx
+│   │   ├── MainContent.jsx
+│   │   ├── GameSwitcher.jsx
+│   │   ├── DustCanvas.jsx
+│   │   └── Modal.jsx
+│   ├── tabs/            # Page components
+│   │   ├── ConverterTab.jsx
+│   │   ├── CloudSyncTab.jsx
+│   │   ├── AboutTab.jsx
+│   │   ├── CreditsTab.jsx
+│   │   └── SettingsTab.jsx
+│   └── hooks/           # Custom React hooks
+│       └── useModal.js
+└── LICENSE              # MIT License
 ```
+
+### Development Commands
+
+- `npm run dev` - Start Vite dev server only
+- `npm run electron:dev` - Start dev server + Electron (recommended for development)
+- `npm run build` - Build for production
+- `npm run electron` - Run Electron with production build
+- `npm start` - Build and run Electron
 
 ### Building for Distribution
 
 To create a distributable package, you can use tools like:
 - [electron-builder](https://www.electron.build/)
 - [electron-packager](https://github.com/electron/electron-packager)
+
+First, build the React app:
+```bash
+npm run build
+```
+
+Then use your preferred Electron packaging tool to create installers for Windows, macOS, and Linux.
 
 ## License
 

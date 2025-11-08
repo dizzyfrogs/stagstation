@@ -26,14 +26,14 @@ class CloudSyncService {
 
       const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf-8'));
       
-      // use device flow for OAuth
+      // device flow oauth
       const oauth2Client = new google.auth.OAuth2(
         credentials.installed.client_id,
         credentials.installed.client_secret,
         'urn:ietf:wg:oauth:2.0:oob'
       );
 
-      // check if we have stored tokens
+      // check for stored tokens
       const tokenPath = path.join(os.homedir(), '.stagstation', 'google-tokens.json');
       let tokens = null;
       
@@ -43,23 +43,23 @@ class CloudSyncService {
           oauth2Client.setCredentials(tokens);
         }
       } catch (error) {
-        // no stored tokens, need to authenticate
+        // no tokens, need auth
       }
 
       if (!tokens) {
-        // device flow authentication
+        // device flow auth
         const deviceCodeResponse = await this.requestDeviceCode(
           credentials.installed.client_id,
           credentials.installed.client_secret
         );
 
-        // store oauth2Client and device code for polling
+        // store oauth client and device code
         this.pendingOAuthClient = oauth2Client;
         this.deviceCode = deviceCodeResponse.device_code;
         this.deviceCodeExpiresIn = deviceCodeResponse.expires_in || 1800;
         this.deviceCodeInterval = deviceCodeResponse.interval || 5;
 
-        // return device code info for user
+        // return device code for user
         return { 
           success: false, 
           needsAuth: true, 
@@ -74,7 +74,7 @@ class CloudSyncService {
       this.drive = google.drive({ version: 'v3', auth: oauth2Client });
       this.authenticated = true;
 
-      // find or create JKSV folder
+      // find/create JKSV folder
       await this.findJKSVFolder();
 
       return { success: true, authenticated: true };
@@ -512,7 +512,8 @@ class CloudSyncService {
           status: 'in-sync',
           localTime: localTime,
           cloudTime: cloudTime,
-          action: null
+          action: null,
+          cloudFile: cloudFile
         };
       } else if (timeDiff > 0) {
         return {

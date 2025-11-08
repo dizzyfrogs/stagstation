@@ -9,7 +9,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1140,
     height: 850,
-    resizable: false,
+    resizable: true,
+    maximizable: true,
     frame: false,
     titleBarStyle: 'hidden',
     backgroundColor: '#0f0f1a',
@@ -18,11 +19,17 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
-      devTools: false
+      devTools: true
     }
   });
 
-  mainWindow.loadFile('index.html');
+  // dev mode uses vite server, prod uses built files
+  if (process.env.NODE_ENV === 'development' || process.argv.includes('--dev')) {
+    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+  }
 }
 
 app.whenReady().then(() => {
@@ -35,8 +42,11 @@ app.whenReady().then(() => {
   });
 });
 
-// disable dev tools shortcuts
+// dev tools stuff
 app.on('browser-window-created', (event, window) => {
+  if (process.env.NODE_ENV === 'development' || process.argv.includes('--dev')) {
+    return;
+  }
   window.webContents.on('before-input-event', (event, input) => {
     if (input.control && input.shift && input.key.toLowerCase() === 'i') {
       event.preventDefault();
@@ -53,7 +63,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-// IPC handlers
+// ipc stuff
 ipcMain.handle('select-file', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
@@ -97,7 +107,7 @@ ipcMain.handle('save-file', async (event, defaultPath) => {
 
 const { pcToSwitch, switchToPc } = require('./converter.js');
 
-// gets the default save path for hollow knight based on OS
+// get hollow knight save path based on OS
 function getHollowKnightSavePath() {
   const platform = process.platform;
   const homeDir = os.homedir();
@@ -113,7 +123,7 @@ function getHollowKnightSavePath() {
   }
 }
 
-// gets the default save path for silksong based on OS
+// get silksong save path based on OS
 function getSilksongSavePath() {
   const platform = process.platform;
   const homeDir = os.homedir();
@@ -177,7 +187,7 @@ ipcMain.handle('detect-save-files', async (event, { game, platform, basePath }) 
                   }
                 }
               } catch {
-                // keep looking
+                // skip this one
               }
             }
             if (searchPath === basePath) {
@@ -189,7 +199,7 @@ ipcMain.handle('detect-save-files', async (event, { game, platform, basePath }) 
         }
       }
     } else {
-      // check if we need to go into a subdirectory for silksong
+      // silksong might need to go one folder deeper
       if (platform === 'pc' && game === 'silksong') {
         try {
           const stats = await fs.stat(searchPath);
@@ -211,30 +221,30 @@ ipcMain.handle('detect-save-files', async (event, { game, platform, basePath }) 
                     }
                   }
                 } catch {
-                  // keep looking
+                  // skip this one
                 }
               }
             }
           }
         } catch {
-          // use original path if we can't read it
+          // fallback to original path
         }
       }
     }
     
     const files = await fs.readdir(searchPath);
     
-    // for switch platform with SD card path, also check for .zip files
+    // switch platform might have .zip files too
     let saveFiles = [];
     if (platform === 'switch' && basePath && basePath !== '') {
-      // check for both .dat files and .zip files
+      // look for both .dat and .zip
       saveFiles = files.filter(file => {
         const regularSavePattern = /^user\d+\.dat$/i;
         const zipPattern = /\.zip$/i;
         return regularSavePattern.test(file) || zipPattern.test(file);
       });
     } else {
-      // only show actual save files, skip backups
+      // only actual saves, skip backups
       saveFiles = files.filter(file => {
         const regularSavePattern = /^user\d+\.dat$/i;
         return regularSavePattern.test(file);
@@ -289,7 +299,7 @@ ipcMain.handle('read-settings', async () => {
   try {
     const data = await fs.readFile(settingsPath, 'utf-8');
     const settings = JSON.parse(data);
-    // make sure cloud sync settings exist
+    // ensure cloud sync settings exist
     if (!settings.cloudSync) {
       settings.cloudSync = {
         enabled: false,
@@ -307,7 +317,7 @@ ipcMain.handle('read-settings', async () => {
         }
       };
     } else if (!settings.cloudSync.metaFile) {
-      // add metaFile defaults if missing
+      // add metaFile defaults
       settings.cloudSync.metaFile = {
         enabled: true,
         mode: 'auto',
@@ -348,7 +358,7 @@ ipcMain.handle('write-settings', async (event, settings) => {
   }
 });
 
-// window controls
+// window button handlers
 ipcMain.handle('window-minimize', () => {
   mainWindow.minimize();
 });
@@ -369,7 +379,7 @@ ipcMain.handle('window-is-maximized', () => {
   return mainWindow.isMaximized();
 });
 
-// cloud sync handlers
+// cloud sync stuff
 const { CloudSyncService } = require('./cloud-sync.js');
 let cloudSyncService = null;
 
@@ -395,7 +405,7 @@ async function readSettingsSync() {
         }
       };
     } else if (!settings.cloudSync.metaFile) {
-      // add metaFile defaults if missing
+      // add metaFile defaults
       settings.cloudSync.metaFile = {
         enabled: true,
         mode: 'auto',
@@ -478,21 +488,21 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
     const settings = await readSettingsSync();
     const backupDir = settings.cloudSync?.backupPath || path.join(app.getPath('userData'), 'backups', game);
 
-    // create backup if enabled
+    // backup if enabled
     if (createBackup && settings.cloudSync.createBackups) {
       await cloudSyncService.createBackup(localPath, backupDir);
     }
 
-    // convert PC to switch format
+    // convert to switch format
     const tempSwitchPath = path.join(os.tmpdir(), `stagstation_${Date.now()}_user${slotNumber}.dat`);
     await pcToSwitch(localPath, tempSwitchPath);
 
-    // upload to cloud, create new zip file with timestamp
+    // upload to cloud with timestamp
     const gameName = game === 'hollowknight' ? 'Hollow Knight' : 'Hollow Knight Silksong';
     const gameFolderId = await cloudSyncService.findGameFolder(gameName);
     const AdmZip = require('adm-zip');
 
-    // generate timestamp in format: YYYY-MM-DD_hh-mm-ss
+    // timestamp format: YYYY-MM-DD_hh-mm-ss
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -503,22 +513,22 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
     const timestamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
     const zipFileName = `${saveName}.zip`;
 
-    // create new zip file
+    // make zip file
     const zip = new AdmZip();
     zip.addFile(`user${slotNumber}.dat`, await fs.readFile(tempSwitchPath));
 
-    // handle .nx_save_meta.bin file if enabled
+    // handle meta file if enabled
     const metaFileSettings = settings.cloudSync?.metaFile;
     if (metaFileSettings?.enabled) {
       let metaFilePath = null;
       
       if (metaFileSettings.mode === 'custom' && metaFileSettings.customPath) {
-        // use custom meta file path
+        // use custom path
         if (await cloudSyncService.fileExists(metaFileSettings.customPath)) {
           metaFilePath = metaFileSettings.customPath;
         }
       } else if (metaFileSettings.mode === 'auto') {
-        // find most recent meta file from cloud saves
+        // find most recent meta file from cloud
         try {
           const saves = await cloudSyncService.listSaves(game);
           const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -529,7 +539,7 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
               const tempZip = new AdmZip(tempZipPath);
               const metaEntry = tempZip.getEntry('.nx_save_meta.bin');
               if (metaEntry && !metaEntry.isDirectory) {
-                // extract meta file to temp location
+                // extract to temp
                 const tempMetaPath = path.join(os.tmpdir(), `stagstation_meta_${uniqueId}.bin`);
                 tempZip.extractEntryTo(metaEntry, os.tmpdir(), false, true);
                 const extractedPath = path.join(os.tmpdir(), '.nx_save_meta.bin');
@@ -538,12 +548,12 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
                   metaFilePath = tempMetaPath;
                 }
                 await fs.unlink(tempZipPath).catch(() => {});
-                break; // use found
+                break; // found it
               }
               await fs.unlink(tempZipPath).catch(() => {});
             } catch (error) {
               await fs.unlink(tempZipPath).catch(() => {});
-              // continue to next save
+              // try next save
             }
           }
         } catch (error) {
@@ -553,7 +563,7 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
       
       if (metaFilePath) {
         zip.addFile('.nx_save_meta.bin', await fs.readFile(metaFilePath));
-        // clean up temp meta file if it was extracted
+        // cleanup temp meta file
         if (metaFilePath.includes('stagstation_meta_')) {
           await fs.unlink(metaFilePath).catch(() => {});
         }
@@ -563,14 +573,13 @@ ipcMain.handle('cloud-upload-slot', async (event, game, slotNumber, localPath, s
     const zipFilePath = path.join(os.tmpdir(), `stagstation_${Date.now()}_${zipFileName}`);
     zip.writeZip(zipFilePath);
 
-    // upload new zip file
+    // upload zip
     const uploadedFile = await cloudSyncService.uploadFile(zipFilePath, zipFileName, gameFolderId);
 
-    // update local file timestamp to match cloud timestamp
-    // this prevents the "cloud-newer" false positive after upload
+    // update local timestamp to match cloud so it doesn't show as "cloud-newer" after upload
     await cloudSyncService.updateLocalFileTimestamp(localPath, uploadedFile.modifiedTime);
 
-    // clean up temp files
+    // cleanup temp files
     await fs.unlink(tempSwitchPath).catch(() => {});
     await fs.unlink(zipFilePath).catch(() => {});
 
@@ -590,16 +599,16 @@ ipcMain.handle('cloud-download-slot', async (event, game, slotNumber, localPath,
     const backupDir = settings.cloudSync?.backupPath || path.join(app.getPath('userData'), 'backups', game);
     const AdmZip = require('adm-zip');
 
-    // create backup if enabled and file exists
+    // backup if enabled and file exists
     if (createBackup && settings.cloudSync.createBackups && await cloudSyncService.fileExists(localPath)) {
       await cloudSyncService.createBackup(localPath, backupDir);
     }
 
-    // download zip file from cloud
+    // download zip from cloud
     const tempZipPath = path.join(os.tmpdir(), `stagstation_${Date.now()}_save.zip`);
     await cloudSyncService.downloadSaveFile(fileId, tempZipPath);
 
-    // extract the specific slot from zip
+    // extract the slot from zip
     const zip = new AdmZip(tempZipPath);
     const entry = zip.getEntry(entryName || `user${slotNumber}.dat`);
     
@@ -611,14 +620,14 @@ ipcMain.handle('cloud-download-slot', async (event, game, slotNumber, localPath,
     const tempSwitchPath = path.join(os.tmpdir(), `stagstation_${Date.now()}_user${slotNumber}.dat`);
     zip.extractEntryTo(entry, os.tmpdir(), false, true);
     
-    // move extracted file to temp path
+    // move to temp path
     const extractedPath = path.join(os.tmpdir(), entryName || `user${slotNumber}.dat`);
     await fs.rename(extractedPath, tempSwitchPath);
 
-    // convert switch to PC format
+    // convert to PC format
     await switchToPc(tempSwitchPath, localPath);
 
-    // clean up temp files
+    // cleanup temp files
     await fs.unlink(tempZipPath).catch(() => {});
     await fs.unlink(tempSwitchPath).catch(() => {});
 
@@ -633,7 +642,36 @@ ipcMain.handle('get-default-save-path', async (event, game) => {
     if (game === 'hollowknight') {
       return { success: true, path: getHollowKnightSavePath() };
     } else if (game === 'silksong') {
-      return { success: true, path: getSilksongSavePath() };
+      // silksong sometimes has a userid subfolder, gotta find it
+      const silksongBase = getSilksongSavePath();
+      try {
+        const items = await fs.readdir(silksongBase);
+        for (const item of items) {
+          const itemPath = path.join(silksongBase, item);
+          try {
+            const itemStats = await fs.stat(itemPath);
+            if (itemStats.isDirectory()) {
+              const subItems = await fs.readdir(itemPath);
+              const hasDatFiles = subItems.some(file => file.endsWith('.dat'));
+              if (hasDatFiles) {
+                return { success: true, path: itemPath };
+              }
+            }
+          } catch {
+            // keep looking
+          }
+        }
+        // if no subfolder, check if .dat files are in base dir
+        const baseItems = await fs.readdir(silksongBase);
+        const hasDatFiles = baseItems.some(file => file.endsWith('.dat'));
+        if (hasDatFiles) {
+          return { success: true, path: silksongBase };
+        }
+        // default to base if nothing found
+        return { success: true, path: silksongBase };
+      } catch {
+        return { success: true, path: silksongBase };
+      }
     }
     return { success: false, error: 'Unknown game' };
   } catch (error) {
@@ -645,6 +683,10 @@ ipcMain.handle('open-external-url', async (event, url) => {
   await shell.openExternal(url);
 });
 
+ipcMain.handle('get-user-data-path', async () => {
+  return { success: true, path: app.getPath('userData') };
+});
+
 ipcMain.handle('cloud-sync-all', async (event, game, createBackup) => {
   try {
     if (!cloudSyncService || !cloudSyncService.authenticated) {
@@ -654,7 +696,7 @@ ipcMain.handle('cloud-sync-all', async (event, game, createBackup) => {
     const settings = await readSettingsSync();
     let pcPath = settings.pcSavePath;
     if (!pcPath) {
-      // use default path based on game
+      // use default path
       if (game === 'hollowknight') {
         pcPath = getHollowKnightSavePath();
       } else if (game === 'silksong') {
@@ -664,7 +706,7 @@ ipcMain.handle('cloud-sync-all', async (event, game, createBackup) => {
       }
     }
     
-    // compare all slots (1-4 typically)
+    // compare all slots
     const comparisons = [];
     for (let slot = 1; slot <= 4; slot++) {
       const localPath = path.join(pcPath, `user${slot}.dat`);
