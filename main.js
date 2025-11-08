@@ -6,6 +6,21 @@ const os = require('os');
 let mainWindow;
 
 function createWindow() {
+  // Cross-platform icon handling
+  let iconPath;
+  const platform = process.platform;
+  if (platform === 'win32') {
+    iconPath = path.join(__dirname, 'assets', 'icon.ico');
+  } else if (platform === 'darwin') {
+    iconPath = path.join(__dirname, 'assets', 'icon.icns');
+  } else {
+    // Linux and other platforms
+    iconPath = path.join(__dirname, 'assets', 'icon.png');
+  }
+  
+  // Check if icon exists, otherwise use default
+  const iconExists = require('fs').existsSync(iconPath);
+  
   mainWindow = new BrowserWindow({
     width: 1140,
     height: 850,
@@ -14,7 +29,7 @@ function createWindow() {
     frame: false,
     titleBarStyle: 'hidden',
     backgroundColor: '#0f0f1a',
-    icon: path.join(__dirname, 'assets', 'icon.ico'),
+    ...(iconExists && { icon: iconPath }),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
