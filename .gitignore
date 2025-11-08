@@ -23,9 +23,20 @@ npm-debug.log*
 # Electron
 out/
 app/
+dist-packages/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
 
 # Settings (user-specific)
 settings.json
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
 
 
 
