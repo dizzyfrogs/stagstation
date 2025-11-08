@@ -1,162 +1,218 @@
 # Stagstation
 
-A cross-platform desktop application for managing save files for **Hollow Knight** and **Hollow Knight: Silksong**. Convert saves between PC and Switch formats, sync with Google Drive, and more. Available for **Windows**, **macOS**, and **Linux**.
+A cross-platform desktop application for managing save files for **Hollow Knight** and **Hollow Knight: Silksong**. Convert saves between PC and Switch formats, edit your saves with a powerful visual editor, and sync with Google Drive—all in one beautiful, easy-to-use interface.
 
-## Features
+Available for **Windows**, **macOS**, and **Linux** (including SteamOS).
 
-- **Save Conversion**: Bidirectional conversion between PC and Switch formats
-- **Save Editor**: Edit save files with a powerful visual editor or raw JSON editor with VS Code-style syntax highlighting
-- **Cloud Sync**: Backup and sync your saves with Google Drive
-- **Auto-Detection**: Automatically find save files in configured paths
-- **Meta File Support**: Automatically include `.nx_save_meta.bin` files for Switch saves
-- **Multi-Format Support**: Works with both `.dat` and `.zip` files
+![Stagstation](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+---
+
+## ✨ Features
+
+### 🔄 Save Conversion
+Seamlessly convert your save files between PC and Switch formats. Play on your PC, continue on your Switch, or vice versa—Stagstation handles all the technical complexity behind the scenes.
+
+### ✏️ Save Editor
+Edit your save files directly with a powerful visual editor or raw JSON editor:
+- **Visual Editor**: Edit values with an intuitive interface (checkboxes for booleans, text fields for strings/numbers)
+- **Raw JSON Editor**: Full VS Code-style syntax highlighting, validation, and IntelliSense
+- **Smart Performance**: Large files automatically use collapsible sections for smooth editing
 - **Automatic Backups**: Optionally create backups before editing saves
-- **Modern UI**: Built with React and Mantine UI - clean, intuitive interface with smooth animations
 
-## Why I Built This
+### ☁️ Cloud Sync
+Keep your saves backed up and synchronized with Google Drive:
+- Never lose your progress
+- Access your saves from anywhere
+- View sync status at a glance (Local Newer, Cloud Newer, In Sync)
+- Upload or download saves with one click
 
-This project originally started as a tool to streamline transferring my save files between my Switch and PC. I quickly realized that tools for this already exist, but I decided to combine and streamline them anyway as a way to learn about using certain technologies.
+### 🎯 Auto-Detection
+Stagstation automatically finds your save files in configured paths—no more hunting through folders!
 
-This project has been a great learning experience, and now I have a tool that makes managing saves for these amazing games seamless and enjoyable.
+### 📁 Multi-Format Support
+Works with both `.dat` and `.zip` files, and automatically includes `.nx_save_meta.bin` files for Switch saves to prevent JKSV errors.
 
-Built with passion for the **Hollow Knight community**.
+---
 
-## How It Works
+## 🚀 Quick Start
 
-**PC saves** are encrypted using AES-ECB encryption with Base64 encoding and wrapped in a C# binary header. **Switch saves** (via homebrew/JKSV) are plain JSON text files.
+### Installation
 
-This tool handles:
-- Removing/adding C# binary headers
-- Base64 encoding/decoding
-- AES-ECB encryption/decryption
-- PKCS7 padding/unpadding
+1. **Download** the latest release for your platform (Windows, macOS, or Linux)
 
-## Prerequisites
+2. **Install** the application (or extract if portable)
 
-- **Node.js** (v16 or higher)
-- **npm** (comes with Node.js)
+3. **Launch** Stagstation
 
-## Installation
+### First-Time Setup
 
-1. **Clone or download this repository**
+1. Open Stagstation and go to the **Settings** tab
 
-2. **Install Node.js dependencies:**
-   ```bash
-   npm install
-   ```
+2. **Configure your save file paths:**
+   - **PC Save Path**: Set this to where your PC saves are located
+     - Windows: `C:\Users\YourName\AppData\LocalLow\Team Cherry\Hollow Knight`
+     - macOS: `~/Library/Application Support/unity.Team Cherry.Hollow Knight`
+     - Linux: `~/.config/unity3d/Team Cherry/Hollow Knight`
+   - **Switch JKSV Path**: Set this to where your Switch saves are located (from JKSV)
+     - Example: `D:\JKSV\Hollow Knight` or `/media/sdcard/JKSV/Hollow Knight`
 
-## Usage
+3. **Optional**: Configure your default page, editor backup settings, and cloud sync preferences
 
-### Running in Development Mode
+---
 
-1. **Start the development server:**
-   ```bash
-   npm run electron:dev
-   ```
-   This will start the Vite dev server and launch Electron automatically.
+## 📖 How to Use
 
-### Running in Production Mode
+### Converting Save Files
 
-1. **Build and start the application:**
-   ```bash
-   npm start
-   ```
-   This builds the React app and launches Electron with the production build.
+1. Go to the **Converter** tab
+2. Select your game (Hollow Knight or Silksong)
+3. Choose conversion direction:
+   - **PC → Switch**: Convert a PC save to Switch format
+   - **Switch → PC**: Convert a Switch save to PC format
+4. Stagstation will auto-detect available save files, or click **Browse** to select manually
+5. Choose an output location (or use the suggested path)
+6. Click **Convert Save File**
 
-2. **Configure Settings:**
-   - Go to the Settings tab
-   - Set your PC save path (e.g., `C:\Users\YourName\AppData\LocalLow\Team Cherry\Hollow Knight`)
-   - Set your Switch JKSV path (e.g., `D:\JKSV\Hollow Knight Silksong`)
+That's it! Your converted save is ready to use.
 
-3. **Convert a Save File:**
-   - Select the game (Hollow Knight or Silksong)
-   - Choose conversion direction (PC → Switch or Switch → PC)
-   - Stagstation will auto detect save files, or you can use "Browse" to select manually
-   - Choose output location (or use the suggested path)
-   - Click "Convert Save File"
+### Editing Save Files
 
-4. **Edit a Save File:**
-   - Go to the Editor tab
-   - Select the game (Hollow Knight or Silksong)
-   - Choose a save file (auto-detected or browse manually)
-   - Use the **Editor** tab to edit values with a visual interface (checkboxes for booleans, text fields for strings/numbers)
-   - Or use the **Raw JSON** tab to edit directly with full VS Code-style syntax highlighting and validation
-   - Large files automatically use collapsible sections for better performance
-   - Click "Save Changes" to apply your edits
-   - Optionally enable automatic backups in Settings
+1. Go to the **Editor** tab (default page)
+2. Select your game (Hollow Knight or Silksong)
+3. Choose a save file:
+   - Stagstation will show detected save files with slot numbers and dates
+   - Or click **Browse** to select manually
+4. Choose your editing mode:
+   - **Editor Tab**: Visual interface with checkboxes and text fields
+   - **Raw JSON Tab**: Direct JSON editing with VS Code-style features
+5. Make your changes
+6. Click **Save Changes** to apply your edits
 
-5. **Cloud Sync (Optional):**
-   - Go to the Cloud Sync tab
-   - Select your game (Hollow Knight or Silksong)
-   - Click "Connect to Google Drive" and follow the authentication flow
-   - View your cloud saves with status indicators (Local Newer, Cloud Newer, In Sync)
-   - Upload or download saves directly from the interface
-   
-   **Note:** For information on setting up Google Drive API credentials, see the [JKSV Google Drive setup guide](https://switch.hacks.guide/homebrew/jksv.html?tab=google-drive#setting-up-remote-save-data-backups-google-drive-webdav). Stagstation uses OAuth2 device flow for authentication, which is handled automatically during the connection process.
+**Tip**: Enable automatic backups in Settings to create a backup copy before saving!
 
-## Save File Locations
+### Cloud Sync (Optional)
+
+1. Go to the **Cloud Sync** tab
+2. Select your game (Hollow Knight or Silksong)
+3. Click **Connect to Google Drive** and follow the authentication flow
+4. Once connected, you'll see:
+   - Your local saves
+   - Your cloud saves
+   - Sync status indicators
+5. Upload or download saves directly from the interface
+
+**Note**: For Google Drive API setup, see the [JKSV Google Drive guide](https://switch.hacks.guide/homebrew/jksv.html?tab=google-drive#setting-up-remote-save-data-backups-google-drive-webdav). Stagstation uses OAuth2 device flow for authentication, which is handled automatically.
+
+---
+
+## 📍 Save File Locations
 
 ### PC Save Locations
 
 **Hollow Knight:**
-- **Windows:** `%USERPROFILE%\AppData\LocalLow\Team Cherry\Hollow Knight\`
-- **macOS:** `~/Library/Application Support/unity.Team Cherry.Hollow Knight/`
-- **Linux:** `~/.config/unity3d/Team Cherry/Hollow Knight/`
+- **Windows**: `%USERPROFILE%\AppData\LocalLow\Team Cherry\Hollow Knight\`
+- **macOS**: `~/Library/Application Support/unity.Team Cherry.Hollow Knight/`
+- **Linux**: `~/.config/unity3d/Team Cherry/Hollow Knight/`
 - Files: `user1.dat`, `user2.dat`, `user3.dat`, etc.
 
 **Silksong:**
-- **Windows:** `%USERPROFILE%\AppData\LocalLow\Team Cherry\Hollow Knight Silksong\`
-- **macOS:** `~/Library/Application Support/unity.Team-Cherry.Silksong/`
-- **Linux:** `~/.config/unity3d/Team Cherry/Hollow Knight Silksong/`
+- **Windows**: `%USERPROFILE%\AppData\LocalLow\Team Cherry\Hollow Knight Silksong\`
+- **macOS**: `~/Library/Application Support/unity.Team-Cherry.Silksong/`
+- **Linux**: `~/.config/unity3d/Team Cherry/Hollow Knight Silksong/`
 - Files: `user1.dat`, `user2.dat`, etc.
 
 ### Switch Save Locations (JKSV)
 
-After backing up your save with JKSV, the saves are typically located at:
+After backing up your save with JKSV, saves are typically located at:
 - `[SD_Card]:\JKSV\Hollow Knight\` or `[SD_Card]:\JKSV\Hollow Knight Silksong\`
 - Files: `user1.dat`, `user2.dat`, etc. (plain JSON format)
 - Also supports `.zip` files containing save data
 
-**Note:** When converting PC saves to Switch format, you can enable automatic inclusion of `.nx_save_meta.bin` files in the Settings. This prevents the "Backup contains no meta file!" error in JKSV. The tool can automatically pull the meta file from your most recent cloud save, or you can specify a custom path.
+**Note**: When converting PC saves to Switch format, you can enable automatic inclusion of `.nx_save_meta.bin` files in Settings. This prevents the "Backup contains no meta file!" error in JKSV.
 
-## Technical Details
+---
 
-### Encryption
+## ⚙️ Settings
 
-- **Algorithm:** AES-128-ECB
-- **Key:** `UKu52ePUBwetZ9wNX88o54dnfKRu0T1l` (32 bytes)
-- **Padding:** PKCS7
-- **Encoding:** Base64
+Stagstation offers several customizable settings:
 
-### File Format
+- **Default Page**: Choose which page to show when the app starts (Editor, Converter, or Cloud Sync)
+- **Editor Auto-Backup**: Automatically create backups before saving edits
+- **Backup Location**: Customize where backups are saved
+- **Cloud Sync**: Configure Google Drive integration and backup preferences
+- **Meta File Handling**: Configure automatic meta file inclusion for Switch saves
 
-**PC Format:**
-1. C# binary header (22 bytes)
-2. Length-prefixed string ("System.Byte[]")
-3. Base64-encoded encrypted data
+---
 
-**Switch Format:**
-- Plain JSON text file (decrypted)
-
-## Troubleshooting
+## 🛠️ Troubleshooting
 
 ### Conversion Fails
-- Ensure the input file is valid (not corrupted)
-- Check that you're selecting the correct game and direction
-- Verify file permissions (read/write access)
+- ✅ Ensure the input file is valid (not corrupted)
+- ✅ Check that you're selecting the correct game and direction
+- ✅ Verify file permissions (read/write access)
 
 ### Auto-Detect Doesn't Work
-- Make sure you've set the correct paths in Settings
-- Verify the directories exist and contain `.dat` or `.zip` files
-- Try using the Browse button instead
+- ✅ Make sure you've set the correct paths in Settings
+- ✅ Verify the directories exist and contain `.dat` or `.zip` files
+- ✅ Try using the Browse button instead
+
+### Editor is Slow
+- ✅ Large files automatically use collapsible sections—click to expand sections you need
+- ✅ Use the Raw JSON tab for faster editing of large files
+- ✅ The loading screen appears while rendering—this is normal for large files
 
 ### Cloud Sync Issues
-- Ensure you're connected to Google Drive (check the status indicator)
-- Verify you have internet connectivity
-- If authentication fails, try disconnecting and reconnecting
-- Check that you have the necessary permissions for the Google Drive folder
+- ✅ Ensure you're connected to Google Drive (check the status indicator)
+- ✅ Verify you have internet connectivity
+- ✅ If authentication fails, try disconnecting and reconnecting
+- ✅ Check that you have the necessary permissions for the Google Drive folder
 
-## Development
+---
+
+## 💻 For Developers
+
+### Prerequisites
+
+- **Node.js** (v16 or higher)
+- **npm** (comes with Node.js)
+
+### Development Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/dizzyfrogs/stagstation.git
+   cd stagstation
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run in development mode:**
+   ```bash
+   npm run electron:dev
+   ```
+   This starts the Vite dev server and launches Electron automatically.
+
+### Building for Production
+
+1. **Build the application:**
+   ```bash
+   npm run build
+   ```
+
+2. **Run with production build:**
+   ```bash
+   npm run electron
+   ```
+
+   Or build and run in one command:
+   ```bash
+   npm start
+   ```
 
 ### Tech Stack
 
@@ -201,36 +257,33 @@ stagstation/
 └── LICENSE              # MIT License
 ```
 
-### Development Commands
+### Technical Details
 
-- `npm run dev` - Start Vite dev server only
-- `npm run electron:dev` - Start dev server + Electron (recommended for development)
-- `npm run build` - Build for production
-- `npm run electron` - Run Electron with production build
-- `npm start` - Build and run Electron
+**Encryption:**
+- Algorithm: AES-128-ECB
+- Key: `UKu52ePUBwetZ9wNX88o54dnfKRu0T1l` (32 bytes)
+- Padding: PKCS7
+- Encoding: Base64
 
-### Building for Distribution
+**File Format:**
+- **PC Format**: C# binary header (22 bytes) + Length-prefixed string + Base64-encoded encrypted data
+- **Switch Format**: Plain JSON text file (decrypted)
 
-To create a distributable package, you can use tools like:
-- [electron-builder](https://www.electron.build/)
-- [electron-packager](https://github.com/electron/electron-packager)
+---
 
-First, build the React app:
-```bash
-npm run build
-```
-
-Then use your preferred Electron packaging tool to create installers for Windows, macOS, and Linux.
-
-## License
+## 📝 License
 
 MIT License - See LICENSE file for details
 
-## Disclaimer
+---
 
-This tool is for personal use only. Make backups of your save files before converting. The authors are not responsible for any data loss.
+## ⚠️ Disclaimer
 
-## Credits
+This tool is for personal use only. **Always make backups of your save files before converting or editing.** The authors are not responsible for any data loss.
+
+---
+
+## 🙏 Credits
 
 **Created By:**
 - [dizzyfrogs](https://github.com/dizzyfrogs)
@@ -242,4 +295,14 @@ This tool is for personal use only. Make backups of your save files before conve
 - Influenced by [ArixAR/hollow-sync](https://github.com/ArixAR/hollow-sync)
 
 **Special Thanks:**
-- This tool was created for the Hollow Knight community. Special thanks to Team Cherry for creating these amazing games!
+This tool was created for the **Hollow Knight community**. Special thanks to **Team Cherry** for creating these amazing games!
+
+---
+
+## 💬 Why I Built This
+
+This project originally started as a tool to streamline transferring my save files between my Switch and PC. I quickly realized that tools for this already exist, but I decided to combine and streamline them anyway as a way to learn about using certain technologies.
+
+This project has been a great learning experience, and now I have a tool that makes managing saves for these amazing games seamless and enjoyable.
+
+**Built with passion for the Hollow Knight community.** ❤️
