@@ -1,6 +1,6 @@
 # Stagstation
 
-A cross-platform desktop application for managing save files for **Hollow Knight** and **Hollow Knight: Silksong**. Convert saves between PC and Switch formats, edit your saves with a powerful visual editor, and sync with Google Drive—all in one beautiful, easy-to-use interface.
+A cross-platform desktop application for managing save files for **Hollow Knight** and **Hollow Knight: Silksong**. Convert saves between PC and Switch formats, edit your saves with a powerful visual editor, and sync with Google Drive, all in one beautiful, easy-to-use interface.
 
 Available for **Windows**, **macOS**, and **Linux** (including SteamOS).
 
@@ -322,19 +322,19 @@ stagstation/
 
 ---
 
-## 📝 License
+## License
 
 MIT License - See LICENSE file for details
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This tool is for personal use only. **Always make backups of your save files before converting or editing.** The authors are not responsible for any data loss.
 
 ---
 
-## 🙏 Credits
+## Credits <3
 
 **Created By:**
 - [dizzyfrogs](https://github.com/dizzyfrogs)
